@@ -1,31 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import ToDoList from './components/ToDoList';
 import AddItem from './components/AddItem';
 
-let items = [
-  { key: getUuid(), description: 'Complete homework', isComplete: false },
-  { key: getUuid(), description: 'Buy groceries', isComplete: false },
-  { key: getUuid(), description: 'Call John', isComplete: false },
-  { key: getUuid(), description: 'Blah blah blah Blah blah blah', isComplete: false }
-  // Add more ToDoItems here
-];
-
 function App() {
-  const [toDoItems, setToDoItems] = React.useState(items);
+  const [toDoItems, setToDoItems] = React.useState([]);
 
-  const addItem = (description) => {
+  const addItem = (newItem) => {
     const nextItems = [
       ...toDoItems,
-      {
-        key: getUuid(),
-        description: description,
-        isComplete: false
-      }
+      newItem
     ]
 
     setToDoItems(nextItems);
   };
+
+  const fetchToDoList = async () => {
+    try {
+      await fetch("https://crashtest-to-do.azurewebsites.net/todo")
+        .then(data => data.json())
+        .then(data => {
+          setToDoItems(data);
+        });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchToDoList();
+  }, []);
 
   const updateItems = (item) => {
     const nextItems = toDoItems.map((toDoItem) => {

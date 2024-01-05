@@ -9,9 +9,17 @@ import Checkbox from '@mui/material/Checkbox';
 function ToDoList({toDoItems, onUpdateItem}) {
 
     const handleToggle = (item) => {
-        item.isComplete = !item.isComplete;
+        toggleItem(item);
+    }
 
-        onUpdateItem(item);
+    const toggleItem = async (item) => {
+        await fetch("https://crashtest-to-do.azurewebsites.net/todo/toggle", {
+            method: 'PUT',
+            body: JSON.stringify(item.key),
+            headers: new Headers({'Content-Type': 'application/json'})
+        })
+        .then(response => response.json())
+        .then(data => onUpdateItem(data));
     }
 
     return (
@@ -45,7 +53,7 @@ function ToDoList({toDoItems, onUpdateItem}) {
             })}
             </List>
         </div>
-      );
-    }
+    );
+}
 
 export default ToDoList;

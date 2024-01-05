@@ -8,10 +8,21 @@ function AddItem({onAddItem}) {
             return;
         }
 
-        onAddItem(description);
-                
+        callNewItem();
+
         setDescription('');
     };
+
+    const callNewItem = async () => {
+        
+        await fetch("https://crashtest-to-do.azurewebsites.net/todo/add", {
+            method: 'POST',
+            body: JSON.stringify(description),
+            headers: new Headers({'Content-Type': 'application/json'})
+        })
+        .then(response => response.json())
+        .then(data => onAddItem(data));
+    }
 
     return (
         <div>
